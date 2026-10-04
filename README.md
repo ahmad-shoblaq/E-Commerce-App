@@ -1,114 +1,197 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# E-Commerce App
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A REST API for an e-commerce platform, built with NestJS and MongoDB. Supports customer registration with email verification, product/category/brand/coupon management, a shopping cart, and order placement with server-side pricing and coupon validation.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- Registration with email OTP verification, resend-OTP, and forgot/reset password
+- JWT authentication with role-based access (Customer, Seller, Admin)
+- Admin-only seller account creation
+- Product catalog with categories, brands, and discounts (fixed amount or percentage)
+- Shopping cart: add, view, and remove items
+- Orders: server-computed pricing, coupon validation, and stock management
+- Coupons: date-bounded, optionally restricted to specific customers
+- Global validation, structured error responses, and request logging
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Tech Stack
 
-## Project setup
+- **Framework:** NestJS (TypeScript)
+- **Database:** MongoDB with Mongoose
+- **Auth:** JSON Web Tokens, bcrypt password hashing
+- **Validation:** class-validator / class-transformer
+- **Email:** Nodemailer
+- **Package manager:** pnpm
+- **Testing:** Jest
 
-```bash
-$ pnpm install
-```
+## Getting Started
 
-## Compile and run the project
+### Prerequisites
+- Node.js (v18+ recommended)
+- pnpm (`npm install -g pnpm`)
+- A running MongoDB instance (local or Atlas)
+- A Gmail account with an [App Password](https://myaccount.google.com/apppasswords) for sending OTP emails
 
-```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
-```
-
-## Run tests
+### Installation
 
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+git clone <this-repo-url>
+cd e-commerce-app
+pnpm install
 ```
 
-## Deployment
+### Environment Variables
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Copy `.env.example` to `.env` and fill in your own values:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+```env
+# CONFIGS
+PORT = 3000
+DB_URL = mongodb://127.0.0.1:27017/e-commerce
+
+# EMAIL
+EMAIL_USER =
+EMAIL_PASS =
+
+# TOKEN
+JWT_SECRET =
+```
+
+> `.env` is git-ignored — never commit real credentials.
+
+### Running the app
 
 ```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+# development (watch mode)
+pnpm run start:dev
+
+# production
+pnpm run build
+pnpm run start:prod
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+The server runs on `http://localhost:3000` by default (or whatever `PORT` you set).
 
-## Observability
+### Running tests
 
-In production applications, observability is essential for understanding how your system behaves, detecting issues early, and maintaining reliable performance.
+```bash
+pnpm run test        # unit tests
+pnpm run test:e2e    # end-to-end tests
+pnpm run test:cov    # coverage report
+```
 
-[NestJS Observe](https://observe.nestjs.com) automatically instruments your NestJS application, giving you deep visibility into your system with minimal setup:
+## API Endpoints
 
-- **Distributed tracing:** Follow requests across services and understand how they flow through your system.
-- **Waterfall analysis:** Visualize request execution and identify slow operations, bottlenecks, and unexpected delays.
-- **Performance analysis:** Analyze application performance in real time and quickly pinpoint areas that need optimization.
-- **Metrics:** Track key application and infrastructure metrics to understand system health and performance trends.
-- **Logging:** Centralize and correlate logs with traces and other telemetry to make debugging easier.
-- **Error tracking:** Detect errors quickly and investigate their root causes with the surrounding context.
-- **SLA monitoring:** Track service-level objectives and identify when your application is approaching or exceeding defined thresholds.
-- **Alarms and alerts:** Set up alerts for critical errors, performance degradation, SLA violations, and other anomalies so your team can react quickly.
+All responses follow the shape:
+```json
+{ "success": true, "message": "...", "data": { ... } }
+```
+Protected routes require an `Authorization` header with a JWT access token.
 
-## Resources
+### Auth — `/auth`
 
-Check out a few resources that may come in handy when working with NestJS:
+| Method | Endpoint | Description |
+|--------|----------|--------------|
+| POST | `/auth/register` | Register a new customer account |
+| POST | `/auth/confirm-email` | Confirm an account using the emailed OTP |
+| POST | `/auth/resend-otp` | Resend a new OTP |
+| POST | `/auth/login` | Log in with email + password |
+| POST | `/auth/forgot-password` | Request a password reset OTP |
+| POST | `/auth/reset-password` | Reset a forgotten password using OTP |
+| POST | `/auth/seller` | Create a seller account (Admin only) |
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Auto-instrument your application with [NestJS Observer](https://observer.nestjs.com). Distributed tracing, metrics, and logging made easy. Error tracking and performance monitoring for your NestJS applications.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### Customer — `/customer`
 
-## Support
+| Method | Endpoint | Description |
+|--------|----------|--------------|
+| GET | `/customer/me` | Get the logged-in user's profile |
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Category — `/category`
 
-## Stay in touch
+| Method | Endpoint | Description |
+|--------|----------|--------------|
+| POST | `/category` | Create a category (Admin) |
+| GET | `/category` | List all categories |
+| GET | `/category/:id` | Get a single category |
+| PATCH | `/category/:id` | Update a category (Admin) |
+| DELETE | `/category/:id` | Delete a category (Admin) |
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Brand — `/brand`
 
-## License
+| Method | Endpoint | Description |
+|--------|----------|--------------|
+| POST | `/brand` | Create a brand (Admin) |
+| GET | `/brand` | List all brands |
+| GET | `/brand/:id` | Get a single brand |
+| PATCH | `/brand/:id` | Update a brand (Admin) |
+| DELETE | `/brand/:id` | Delete a brand (Admin) |
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+### Product — `/product`
+
+| Method | Endpoint | Description |
+|--------|----------|--------------|
+| POST | `/product` | Create a product (Admin, Seller) |
+| GET | `/product` | List products, with search/filter/pagination (`search`, `categoryId`, `brandId`, `minPrice`, `maxPrice`, `sort`, `page`, `limit`) |
+| GET | `/product/:id` | Get a single product |
+| PATCH | `/product/:id` | Update a product (Admin, or the Seller who owns it) |
+| DELETE | `/product/:id` | Delete a product (Admin, or the Seller who owns it) |
+
+### Coupon — `/coupon`
+
+| Method | Endpoint | Description |
+|--------|----------|--------------|
+| POST | `/coupon` | Create a coupon (Admin, Seller) |
+| GET | `/coupon` | List all coupons (Admin, Seller) |
+| GET | `/coupon/:id` | Get a single coupon (Admin, Seller) |
+| PATCH | `/coupon/:id` | Update a coupon (Admin, Seller) |
+| DELETE | `/coupon/:id` | Delete a coupon (Admin, Seller) |
+
+### Cart — `/cart`
+
+| Method | Endpoint | Description |
+|--------|----------|--------------|
+| GET | `/cart` | Get the logged-in customer's cart |
+| POST | `/cart` | Add a product to the cart, or set its quantity (`quantity: 0` removes it) |
+| PUT | `/cart/remove/:productId` | Remove a product from the cart |
+
+### Order — `/order`
+
+| Method | Endpoint | Description |
+|--------|----------|--------------|
+| POST | `/order` | Place an order from the current cart (price and coupon are validated server-side) |
+| GET | `/order` | List orders — a customer sees their own, an Admin sees all |
+| GET | `/order/:id` | Get a single order |
+
+## Project Structure
+
+```
+src/
+├── common/
+│   ├── constant/           # Shared messages
+│   ├── decorators/         # @Auth, @Roles, @Public, @User, validators
+│   ├── filters/            # Global HTTP exception filter
+│   ├── guards/              # Auth and role guards
+│   ├── helpers/              # OTP generation, email sending
+│   ├── interceptors/         # Logging, timeout, response transform
+│   └── types/                 # Shared enums and types (discount, order status)
+├── config/
+│   └── env/                   # Environment configuration
+├── models/                     # Mongoose schemas and repositories, by entity
+│   ├── admin/ brand/ cart/ category/ common/ coupon/
+│   ├── customer/ order/ product/ seller/
+│   └── abstract.repository.ts
+├── modules/                     # Feature modules (controller, service, DTOs, entities, factories)
+│   ├── auth/ brand/ cart/ category/
+│   ├── coupon/ customer/ order/ product/
+├── shared/                       # Shared modules (e.g. user repository access)
+├── app.controller.ts
+├── app.module.ts
+├── app.service.ts
+└── main.ts                       # Entry point
+```
+
+## Notes
+
+- Product pricing supports both fixed-amount and percentage discounts; `finalPrice` is computed from `price`, `discountAmount`, and `discountType`.
+- Order totals, discounts, and stock changes are always computed and applied server-side — client-submitted prices or coupon discount amounts are never trusted directly.
+- A coupon can optionally be restricted to specific customers (`assignedTo`) and tracks usage per customer (`usedBy`) to prevent reuse.
+- Sellers can only update or delete their own products; Admins can manage any.
